@@ -4,7 +4,7 @@
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
             -subj "/C=AU/CN=my_common_name/emailAddress=me@me.com" \
-            -keyout certs/03.key -out certs/03.crt
+            -keyout private_key.key -out certificate.crt
 
 # req:    certificate request and certificate generating utility
 # x509:   output self signed cert instead of cert request
