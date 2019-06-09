@@ -3,6 +3,9 @@
 # Before you start
 
 If running in msys/windows, run `source 00_init_env.sh`.
+This project was developed on Windows, so that'll show in
+the path names etc. Just be aware you may need to tweak
+things a bit to run in other OSs.
 
 # Run the demos
 
@@ -12,6 +15,9 @@ what's happening.
 
 # todo
 
-- compare 03 cert to digicert
+- if an intermediate cert is trusted and the root isn't, can we trust the server cert?
 - use certs with passwords
     04
+- pki/pkcs12 files
+- certificate chain
+- mutual auth
