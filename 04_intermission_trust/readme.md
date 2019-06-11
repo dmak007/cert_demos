@@ -86,10 +86,13 @@ You can pass trusted CAs to openssl with the `CAfile` option. See
 `openssl_trust_wiki.sh` for how to pass the globalsign root certificate
 to openssl so that it trusts Wikipedia.
 
-## Can we pretend that our self-signed cert was issued by GlobalSign?
+## Can we fake that our certificate was signed by GlobalSign?
 
-From the above, it seems that one way to make our self-signed certificate
-trusted is to make it look as if it was signed by the GlobalSign root CA.
-Is this possible?
+In short, no. To sign a certificate, you need a private key. We can create
+a CA called 'GlobalSign', but the private key will be different to GlobalSign's
+private key. This will cause signature validation to fail when browsers, openssl
+etc. go to check GlobalSign's signature on our certificate.
+
+To see this in practice, see 04.01 in this directory.
 
 ## todo: trust our self-signed cert
