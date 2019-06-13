@@ -1,5 +1,15 @@
 # Certificate demos using nginx and docker
 
+# Required knowledge
+
+It will probably help to know some docker basics. Hopefully this
+should suffice for the rest:
+
+- nginx:   a HTTP server / reverse-proxy
+- openssl: a cryptography tool that can create certificates,
+           and do many other things related to certificates and keys
+- curl:    a terminal-based HTTP client
+
 # Before you start
 
 If running in msys/windows, run `source 00_init_env.sh`.
@@ -21,4 +31,7 @@ what's happening.
 - pki/pkcs12 files
 - certificate chain
 - mutual auth
+- debugging
+    - with openssl
+    - via nginx logs
 - proof-read all docs
