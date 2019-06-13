@@ -15,9 +15,10 @@ what's happening.
 
 # todo
 
+- install 03 cert into docker image trusted certs
 - if an intermediate cert is trusted and the root isn't, can we trust the server cert?
 - use certs with passwords
-    04
 - pki/pkcs12 files
 - certificate chain
 - mutual auth
+- proof-read all docs

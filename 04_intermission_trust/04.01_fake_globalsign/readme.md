@@ -1,8 +1,13 @@
 ## Can we forge GlobalSign's signature on our certificate?
 
-Let's try. `run_server.sh` runs an nginx server, using certificate.crt, which
-has been signed by a fake GlobalSign certificate, which is `fake_globalsign.crt` in this
-directory.
+Maybe forge isn't the right word, but the aim here is to create our own CA called
+'GlobalSign', copying the issuer name from a real GlobalSign certificate, and see
+if a browser/openssl will trust it.
+
+`gen_ca_and_cert.sh` generates the fake GlobalSign CA certificate `fake_globalsign.crt`,
+and signs our certificate `certificate.crt` that we're going to use as our SSL certificate.
+
+`run_server.sh` runs an nginx server, using `certificate.crt`.
 
 With the above server running, try `curl https://localhost -o /dev/null`.
 This time, instead of seeing the 'self signed certificate' error we saw before,
@@ -12,7 +17,7 @@ Weird. Let's try openssl:
 `echo "Q" | openssl s_client -connect localhost:443`
 
 In the output of the above, you will see `Verification error: certificate signature failure`.
-This means that the fake 'GlobalSign' signature on the certificate.crt is bad, ie. doesn't
+This means that the fake 'GlobalSign' signature on the `certificate.crt` is bad, ie. doesn't
 match the signature of the GlobalSign CA that openssl trusts.
 
 To get a valid GlobalSign signature on our certificate, we need to know the private

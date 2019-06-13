@@ -5,7 +5,8 @@
 When running nginx with a self-signed cert, browsers show a security warning.
 Something to the effect of 'certificate issuer is not trusted'.
 
-This is because we created the certificate, and the browser doesn't trust us.
+This is because we issued our own certificate (created and signed by us),
+and the browser doesn't trust us.
 
 It turns out that no-one trusts us. Assuming you're running the server from
 03_https, run
@@ -15,6 +16,9 @@ It turns out that no-one trusts us. Assuming you're running the server from
 You should see
 
 `curl: (60) SSL certificate problem: self signed certificate`
+
+The above error is misleading, as the actual cause of the problem is that
+the signature on our certificate is from an untrusted CA (us).
 
 Similarly to web browsers, curl verifies the server certificate before 
 establishing a secure connection. Certificate verification can be disabled 
@@ -47,8 +51,7 @@ certificates presented by wikipedia. A bit further down in the output,
 we see `Verification: OK`. This means openssl trusts this connection.
 Why?
 
-It turns out that openssl can be configured with pre-trusted certificates.
-Run
+It turns out that openssl can be configured with pre-trusted certificates. Run
 
 `openssl version -d`
 
@@ -88,11 +91,12 @@ to openssl so that it trusts Wikipedia.
 
 ## Can we fake that our certificate was signed by GlobalSign?
 
+From the above, it sort of looks like we could pretend to be GlobalSign by
+signing our own certificate with GlobalSign's issuer name. Will this work?
+
 In short, no. To sign a certificate, you need a private key. We can create
 a CA called 'GlobalSign', but the private key will be different to GlobalSign's
 private key. This will cause signature validation to fail when browsers, openssl
 etc. go to check GlobalSign's signature on our certificate.
 
 To see this in practice, see 04.01 in this directory.
-
-## todo: trust our self-signed cert
