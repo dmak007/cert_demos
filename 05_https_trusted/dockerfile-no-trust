@@ -1,0 +1,8 @@
+FROM alpine
+
+# install curl and openssl
+RUN apk --no-cache add curl openssl
+
+# remove all trusted CAs
+RUN rm /etc/ssl/cert.pem
+RUN rm /etc/ssl/certs/*

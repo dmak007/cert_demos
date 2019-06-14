@@ -22,28 +22,54 @@ we can build. Our environment will contain
 by `gen_cert.sh`. It also creates a network called `05_net` over which we
 can use to communicate with the server from other containers.
 
-Once the server is running, run `docker build -t uozuaho/sslcurl .` to 
-build the client docker image.
+Once the server is running, run
+`docker build -f dockerfile-no-trust -t uozuaho/sslcurl_no_trust .` to build the
+client docker image.
 
 **todo** this next part is overly complicated, it'd be nice to find an
 easier way to communicate between containers.
 
 Now run `docker network inspect 05_net`. You should see a container in the
 network. Copy its IPv4Address. Now run
-`docker run -it --network 05_net uozuaho/sslcurl curl <container IP>`
+`docker run -it --network 05_net uozuaho/sslcurl_no_trust curl <container IP>`
 
 You should see the welcome page from the nginx server. Now run
-`docker run -it --network 05_net uozuaho/sslcurl curl https://<container IP>`
+`docker run -it --network 05_net uozuaho/sslcurl_no_trust curl https://<container IP>`
 
 You should see an error about certificate locations. This is because the
-uozuaho/sslcurl docker image doesn't come with any trusted ssl certificates.
+uozuaho/sslcurl_no_trust docker image doesn't come with any trusted ssl certificates.
 
 You should see the 'self signed certiciate' error from openssl:
 
 ```
-docker run -it --network 05_net uozuaho/sslcurl \
-    sh -c "echo 'Q' | openssl s_client -connect 172.21.0.2:443"
+docker run --network 05_net uozuaho/sslcurl_no_trust \
+    sh -c "echo 'Q' | openssl s_client -connect <container ip>:443"
+```
+
+If you try Wikipedia, you'll get an error saying 'unable to get local
+issuer certificate', meaning the issuer of Wikipedia's certificate is
+not known by our client docker image:
+
+```
+docker run --network 05_net uozuaho/sslcurl_no_trust \
+    sh -c "echo 'Q' | openssl s_client -connect en.wikipedia.org:443"
 ```
 
 ## Add certificate to client's trusted certificates
 
+Now build a docker image with our self-signed certificate loaded an
+trusted, by running:
+
+`docker build -f dockerfile-trust-us -t uozuaho/sslcurl_trust_us .`
+
+openssl should now be able to successfully connect to our server:
+
+```
+docker run --network 05_net uozuaho/sslcurl_trust_us \
+    sh -c "echo 'Q' | openssl s_client -connect <container ip>:443"
+```
+
+curl will fail with `certificate subject name 'my_common_name' does not match target host name '172.23.0.2'`.
+This is because the common name (CN) in our certificate doesn't match
+the host section of our server's url. Fixing this is beyond the scope
+of my interest.

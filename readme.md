@@ -12,6 +12,8 @@ should suffice for the rest:
 
 # Before you start
 
+Install docker.
+
 If running in msys/windows, run `source 00_init_env.sh`.
 This project was developed on Windows, so that'll show in
 the path names etc. Just be aware you may need to tweak
@@ -25,7 +27,6 @@ what's happening.
 
 # todo
 
-- install 03 cert into docker image trusted certs
 - if an intermediate cert is trusted and the root isn't, can we trust the server cert?
 - use certs with passwords
 - pki/pkcs12 files
