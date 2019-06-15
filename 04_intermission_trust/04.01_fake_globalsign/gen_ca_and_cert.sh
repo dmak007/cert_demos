@@ -6,7 +6,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
             -keyout fake_globalsign.key -out fake_globalsign.crt
 
 # generate a certificate request
-openssl req -nodes -newkey rsa:2048 -out certificate.csr \
+openssl req -nodes -newkey rsa:2048 \
     -subj "/C=AU/CN=my_common_name/emailAddress=me@me.com" \
     -keyout private_key.key -out certificate.csr
 

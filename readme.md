@@ -27,11 +27,13 @@ what's happening.
 
 # todo
 
+- certificate chain
 - if an intermediate cert is trusted and the root isn't, can we trust the server cert?
 - pki/pkcs12 files
-- certificate chain
+    - can u still see public key info with openssl if private key is encrypted?
 - mutual auth
 - debugging
     - with openssl
     - via nginx logs
 - proof-read all docs, test all scripts
+    - add 'build all' scripts
