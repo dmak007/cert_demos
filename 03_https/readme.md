@@ -17,3 +17,6 @@ You can use openssl to view the certificate with the following command
 You can also view the private key using openssl:
 
 `openssl rsa -in private_key.key -text -noout`
+
+Note that we're not encrypting the private key when it is generated,
+which is a bit of a security hole, but makes these examples easier to use.

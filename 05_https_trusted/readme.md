@@ -7,7 +7,7 @@ used by our HTTPS server from 03:
 
 However, rather then needing to pass our certificate to every client
 that needs to talk to our HTTPS server, we can install our certificate
-into a 'trusted certificate store' (?)
+into the system's trusted CA store.
 
 ## Setup
 
@@ -57,8 +57,7 @@ docker run --network 05_net uozuaho/sslcurl_no_trust \
 
 ## Add certificate to client's trusted certificates
 
-Now build a docker image with our self-signed certificate loaded an
-trusted, by running:
+Now build a docker image with our self-signed certificate installed, by running:
 
 `docker build -f dockerfile-trust-us -t uozuaho/sslcurl_trust_us .`
 

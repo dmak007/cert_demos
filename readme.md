@@ -28,11 +28,10 @@ what's happening.
 # todo
 
 - if an intermediate cert is trusted and the root isn't, can we trust the server cert?
-- use certs with passwords
 - pki/pkcs12 files
 - certificate chain
 - mutual auth
 - debugging
     - with openssl
     - via nginx logs
-- proof-read all docs
+- proof-read all docs, test all scripts

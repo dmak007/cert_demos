@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker run -i -t -p 443:443 -d \
+docker run -p 443:443 -d \
     -v $PWD/../static:/usr/share/nginx/html \
     -v $PWD/nginx_config.conf:/etc/nginx/conf.d/nginx_config.conf \
     -v $PWD/certificate.crt:/etc/ssl/certs/certificate.crt \
