@@ -27,12 +27,34 @@ what's happening.
 
 # todo
 
-- pki/pkcs12 files
+- pki/pkcs12 files, other file types
     - can u still see public key info with openssl if private key is encrypted?
-- mutual auth
 - debugging
     - with openssl
     - via nginx logs
+    - scenarios
+        - chain incomplete (server and client)
+        - untrusted cert
 - proof-read all docs, test all scripts
     - add 'build all' scripts
+- write an openssl command cheat sheet
+    - play with verify
 - write a list of questions answered by doing all this
+    - How does the certificate chain work?
+    - Why do some certificates have a chain and others do not?
+    - What are the implications of not having a chain?
+    - What about if the chain has an intermediate certificate but not a root certificate?
+    - What is the difference between a root certificate and an intermediate certificate?
+    - How does the server authenticate using a provided client certificate?
+    - Which certificates need to be on the server (i.e. the client/intermediate/root) in order to authenticate?
+    - Is this answer different depending on whether there is a certificate chain?
+    - How to identify whether a certificate is a client or server certificate?
+    - Is it called a mutual certificate, a client certificate or something else?
+    - Are 'mutual certificates' a thing, or is it 'mutual authentication',
+      and each party needs to receive a certificate they trust from the other party?
+    - Can you get 'mutual certs' that are issued together and must be used together?
+    - Does it matter which 'certificate store' you add a cert to? Does this differ by operating system?
+    - Why are there so many cert file formats? does it matter which one you use?
+    - How do we dump cert info using `openssl`? How does this differ according to file formats?
+    - If your cert config is incorrect, how do you debug it?
+- tldr version for ppl like me
