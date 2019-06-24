@@ -27,18 +27,15 @@ what's happening.
 
 # todo
 
-- pki/pkcs12 files, other file types
-    - can u still see public key info with openssl if private key is encrypted?
 - debugging
     - with openssl
+        - play with verify
     - via nginx logs
     - scenarios
         - chain incomplete (server and client)
         - untrusted cert
 - proof-read all docs, test all scripts
-    - add 'build all' scripts
 - write an openssl command cheat sheet
-    - play with verify
 - write a list of questions answered by doing all this
     - How does the certificate chain work?
     - Why do some certificates have a chain and others do not?
