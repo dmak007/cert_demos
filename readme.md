@@ -30,11 +30,10 @@ what's happening.
 - debugging
     - with openssl
         - play with verify
-    - via nginx logs
+    - via nginx logs ??
     - scenarios
         - chain incomplete (server and client)
         - untrusted cert
-- proof-read all docs, test all scripts
 - write an openssl command cheat sheet
 - write a list of questions answered by doing all this
     - How does the certificate chain work?
@@ -55,3 +54,5 @@ what's happening.
     - How do we dump cert info using `openssl`? How does this differ according to file formats?
     - If your cert config is incorrect, how do you debug it?
 - tldr version for ppl like me
+- proof-read all docs, test all scripts
+- add pictures
