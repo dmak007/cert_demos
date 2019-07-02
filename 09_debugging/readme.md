@@ -79,10 +79,8 @@ openssl will successfully verify `uozu.server.crt` with a `CAfile` in either ord
     openssl verify -x509_strict -show_chain -CAfile temp.crt certs/uozu.server.crt          # OK
     openssl verify -x509_strict -show_chain -CAfile temp.reverse.crt certs/uozu.server.crt  # OK
 
-**Client doesn't trust server issuer certificate**
 **server cert CN wrong**
 **intermediate not marked as CA**
-**same as above, but use iis**
 
 # Client certs
 
@@ -94,3 +92,4 @@ openssl will successfully verify `uozu.server.crt` with a `CAfile` in either ord
 
 # todo
 - write 'certificate setup' at top, showing which certs will be used
+- iis

@@ -24,14 +24,24 @@ openssl x509 -req -days 365 -in uozusign_intermediate.csr \
 # generate server certificate request
 openssl req -nodes -newkey rsa:2048 \
     -subj "/C=AU/CN=localhost/emailAddress=me@me.com" \
-    -keyout uozu.server.key -out uozu.server.csr
+    -keyout uozu.server.localhost.key -out uozu.server.localhost.csr
+
+# generate server certificate (with uozu.server.com CN) request
+openssl req -nodes -newkey rsa:2048 \
+    -subj "/C=AU/CN=uozu.server.com/emailAddress=me@me.com" \
+    -keyout uozu.server.com.key -out uozu.server.com.csr
 
 # sign server certificate with the intermediate CA:
-openssl x509 -req -days 365 -in uozu.server.csr -CA uozusign_intermediate.crt \
-    -CAkey uozusign_intermediate.key -CAcreateserial -out uozu.server.crt
+openssl x509 -req -days 365 -in uozu.server.localhost.csr -CA uozusign_intermediate.crt \
+    -CAkey uozusign_intermediate.key -CAcreateserial -out uozu.server.localhost.crt
 
-# create certificate chain to root (don't include the root)
-cat uozu.server.crt uozusign_intermediate.crt > uozu.server.chain.crt
+# sign server certificate (with uozu.server.com CN) with the intermediate CA:
+openssl x509 -req -days 365 -in uozu.server.com.csr -CA uozusign_intermediate.crt \
+    -CAkey uozusign_intermediate.key -CAcreateserial -out uozu.server.com.crt
+
+# create server certificate chains
+cat uozu.server.localhost.crt uozusign_intermediate.crt > uozu.server.localhost.chain.crt
+cat uozu.server.com.crt uozusign_intermediate.crt > uozu.server.com.chain.crt
 
 # generate client certificate request
 openssl req -nodes -newkey rsa:2048 \
