@@ -49,3 +49,7 @@ To view the contents of a p12 file:
 This will prompt for a password, and output the contents in a mix of text and
 base64. To view the certificates within the file, copy+paste the base64 certificate
 text to a file and output using the x509 command used earlier.
+
+Handy tip: The password for a pfx file may not be the same as the password
+           used to encrypt the private key within! If the expected pfx password
+           isn't working, try just hitting enter (password = empty string).

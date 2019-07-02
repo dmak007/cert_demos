@@ -39,21 +39,50 @@ know about the intermediate CA that signed the server cert. The server needs to 
 certificate chain back to the root certificate, for the client to be able to verify the
 server certficate:
 
-    openssl verify -CAfile certs/uozusign_root.crt certs/uozu.server.chain.crt
+    # use -untrusted to specify intermediate CAs
+    openssl verify -x509_strict -show_chain -CAfile certs/uozusign_root.crt \
+        -untrusted certs/uozusign_intermediate.crt certs/uozu.server.crt
+
+    # alternatively, create a CA chain
+    cat certs/uozusign_intermediate.crt certs/uozusign_root.crt > temp.crt
+    openssl verify -x509_strict -show_chain -CAfile temp.crt certs/uozu.server.crt
+    rm temp.crt
+
+    # note that putting the chain in the certificate file to be verified fails. I couldn't figure out why:
+    openssl verify -x509_strict -show_chain -CAfile certs/uozusign_root.crt certs/uozu.server.chain.crt
+
     echo "Q" | openssl s_client -CAfile certs/uozusign_root.crt localhost:82
 
-    # TODO: make server cert CN=localhost
     curl --cacert certs/uozusign_root.crt https://localhost:82
 
-TODO: why do nginx/openssl use different cert chain order??? is one wrong? which is the 'right' way?
-TODO: confirm: cert info can give website to retrieve intermediate certs, so sending chain may be
-      optional
+Note that some tools/software/libraries can retrieve intermediate certificates if they can't be
+found locally, based on URLs provided within certificates in the given chain.
 
-**try -partial_chain (openssl)**
+Another note: Technically, if you trust an intermediate CA, then according to X509, you can trust
+the target certificate. By default, this isn't how openssl behaves. Some other tools might.
+To make `openssl verify` behave this way, you can use the `-partial_chain` option:
+
+    openssl verify -x509_strict -show_chain -partial_chain \
+        -CAfile certs/uozusign_intermediate.crt certs/uozu.server.chain.crt
+
 **chain in wrong order**
+
+For nginx to even start, the server certificate chain must be in the 'correct' order. For nginx,
+this is
+
+    server cert -> intermediate 1 -> intermediate2 ...
+
+openssl will successfully verify `uozu.server.crt` with a `CAfile` in either order:
+
+    cat certs/uozusign_intermediate.crt certs/uozusign_root.crt > temp.crt
+    cat certs/uozusign_root.crt certs/uozusign_intermediate.crt > temp.reverse.crt
+    openssl verify -x509_strict -show_chain -CAfile temp.crt certs/uozu.server.crt          # OK
+    openssl verify -x509_strict -show_chain -CAfile temp.reverse.crt certs/uozu.server.crt  # OK
+
 **Client doesn't trust server issuer certificate**
 **server cert CN wrong**
 **intermediate not marked as CA**
+**same as above, but use iis**
 
 # Client certs
 

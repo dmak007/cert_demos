@@ -23,7 +23,7 @@ openssl x509 -req -days 365 -in uozusign_intermediate.csr \
 
 # generate server certificate request
 openssl req -nodes -newkey rsa:2048 \
-    -subj "/C=AU/CN=uozu.server/emailAddress=me@me.com" \
+    -subj "/C=AU/CN=localhost/emailAddress=me@me.com" \
     -keyout uozu.server.key -out uozu.server.csr
 
 # sign server certificate with the intermediate CA:
@@ -31,10 +31,7 @@ openssl x509 -req -days 365 -in uozu.server.csr -CA uozusign_intermediate.crt \
     -CAkey uozusign_intermediate.key -CAcreateserial -out uozu.server.crt
 
 # create certificate chain to root (don't include the root)
-cat uozusign_intermediate.crt uozu.server.crt > uozu.server.chain.crt
-
-# create certificate chain in wrong order
-cat uozu.server.crt uozusign_intermediate.crt > uozu.server.chain.reversed.crt
+cat uozu.server.crt uozusign_intermediate.crt > uozu.server.chain.crt
 
 # generate client certificate request
 openssl req -nodes -newkey rsa:2048 \
