@@ -1,30 +1,32 @@
 # Debugging certificates
 
-openssl comes with a handy `verify` command which can be used to check that
-certificates are valid when used together.
+There are a number of ways to verify that your certificate setup is correct.
+There's no silver bullet for this, and it often takes several tools to confirm
+problems.
 
-For this demo, we'll use the following certificates:
+Some of the tools we'll be using are:
 
-uozusign_root.crt:          self-signed CA certificate
-uozusign_intermediate.crt:  intermediate CA cert, signed by root
-uozu.server.crt:            server certifiate, signed by intermediate
-uozu.client.crt:            client certificate, signed by intermediate
+- `openssl verify`
+- `openssl s_client`
+- `curl`
+
+You can also use various web browsers to inspect certificates and potential issues.
+
+Here are some of the certificates we'll be using in this demo:
+
+certs/uozusign_root.crt:          self-signed CA certificate
+certs/uozusign_intermediate.crt:  intermediate CA cert, signed by root
+certs/uozu.server.localhost.crt:  server certifiate, signed by intermediate
+certs/uozu.client.crt:            client certificate, signed by intermediate
 
 ## Getting started
 
 Run `./run_servers.sh` to run all the http servers used in this demo
 
-Warm up with these commands:
-
-    openssl verify certs/uozusign_root.crt
-    
-    # verification fails with 'self signed certificate', but it's actually because the issuer is not trusted
-
-    openssl verify -CAfile certs/uozusign_root.crt certs/uozusign_root.crt
-
-    # verification OK: 'CAfile' tells openssl to trust the given CA, which is the same cert we're verifying
-
 ## Scenarios
+
+Below are some certificate configuration problems that you may come across,
+and some ways of identifying them.
 
 **server doesn't send chain**
 
@@ -80,6 +82,26 @@ openssl will successfully verify `uozu.server.crt` with a `CAfile` in either ord
     openssl verify -x509_strict -show_chain -CAfile temp.reverse.crt certs/uozu.server.crt  # OK
 
 **server cert CN wrong**
+
+A common security check that https clients (including browsers) perform is checking that
+the CN matches the domain of the website presenting the certificate. The following curl
+request works, since the server on port 82 uses a certificate with a CN = localhost:
+
+    curl --cacert certs/uozusign_root.crt https://localhost:82
+
+The server running on port 83 uses CN = uozu.server.com, which curl complains about:
+
+    curl --cacert certs/uozusign_root.crt https://localhost:83
+
+    > curl: (60) SSL: certificate subject name 'uozu.server.com' does not match target host name 'localhost'
+
+`openssl s_client` doesn't seem to care about this, perhaps as it just verifies the certificates
+themselves:
+
+    echo "Q" | openssl s_client -CAfile certs/uozusign_root.crt localhost:83
+
+    > OK
+
 **intermediate not marked as CA**
 
 # Client certs
