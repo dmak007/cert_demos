@@ -31,12 +31,6 @@ what's happening.
 # todo
 
 - debugging
-    - with openssl
-        - play with verify
-    - via nginx logs ??
-    - scenarios
-        - chain incomplete (server and client)
-        - untrusted cert
 - fix todos in cert_questions.md
 - write an openssl command cheat sheet
 - tldr version of all this for ppl like me
