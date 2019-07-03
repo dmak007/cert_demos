@@ -11,6 +11,11 @@ openssl req -nodes -newkey rsa:2048 \
     -subj "/OU=UozuSign Intermediate CA/O=UozuSign intermediate/CN=UozuSign intermediate" \
     -keyout uozusign_intermediate.key -out uozusign_intermediate.csr
 
+# generate non-CA (invalid) intermediate certificate request
+openssl req -nodes -newkey rsa:2048 \
+    -subj "/OU=UozuSign Intermediate CA/O=UozuSign intermediate/CN=UozuSign intermediate" \
+    -key uozusign_intermediate.key -out uozusign_intermediate.notca.csr
+
 # sign intermediate certificate with the root CA
 # Note the '-extensions v3_ca' parameters. This is to set this
 # certificate to be a CA. openssl verify fails otherwise, since
@@ -20,6 +25,11 @@ openssl x509 -req -days 365 -in uozusign_intermediate.csr \
     -extensions v3_ca -extfile uozusign_intermediate.conf \
     -CA uozusign_root.crt -CAkey uozusign_root.key \
     -CAcreateserial -out uozusign_intermediate.crt
+
+# sign the non-CA intermediate cert
+openssl x509 -req -days 365 -in uozusign_intermediate.notca.csr \
+    -CA uozusign_root.crt -CAkey uozusign_root.key \
+    -CAcreateserial -out uozusign_intermediate.notca.crt
 
 # generate server certificate request
 openssl req -nodes -newkey rsa:2048 \
