@@ -55,6 +55,7 @@ openssl x509 -req -days 365 -in uozu.server.com.csr -CA uozusign_intermediate.cr
 
 # create server certificate chains
 cat uozu.server.localhost.crt uozusign_intermediate.crt > uozu.server.localhost.chain.crt
+cat uozu.server.localhost.notca.crt uozusign_intermediate.notca.crt > uozu.server.localhost.notca.chain.crt
 cat uozu.server.com.crt uozusign_intermediate.crt > uozu.server.com.chain.crt
 
 # generate client certificate request

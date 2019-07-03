@@ -6,9 +6,10 @@ problems.
 
 Some of the tools we'll be using are:
 
-- `openssl verify`
 - `openssl s_client`
 - `curl`
+- `openssl verify`
+    - gives misleading results, use with caution
 
 You can also use various web browsers to inspect certificates and potential issues.
 
@@ -112,12 +113,22 @@ to issues such as the following:
     # verify intermediate cert not marked as a CA cert
     openssl verify -CAfile certs/uozusign_root.crt certs/uozusign_intermediate.notca.crt
 
-    > OK  # what???
+    > OK  # this is fine, the intermediate cert is valid, it just shouldn't be used
+          # to sign other certificates
 
     # verify server cert signed by the non-CA intermediate
-    openssl verify -CAfile certs/uozusign_root.crt -untrusted certs/uozusign_intermediate.notca.crt certs/uozu.server.localhost.notca.crt
+    openssl verify -CAfile certs/uozusign_root.crt -untrusted \
+        certs/uozusign_intermediate.notca.crt certs/uozu.server.localhost.notca.crt
 
     > error 24 at 1 depth lookup: invalid CA certificate  # OK, this is what we expected
+
+    curl --cacert certs/uozusign_root.crt https://localhost:84
+
+    > SSL certificate problem: invalid CA certificate  # good
+
+    echo "Q" | openssl s_client -CAfile certs/uozusign_root.crt localhost:84
+
+    > Verify return code: 24 (invalid CA certificate)  # good
 
 # Client certs
 
@@ -128,5 +139,4 @@ to issues such as the following:
 
 
 # todo
-- write 'certificate setup' at top, showing which certs will be used
-- iis
+- iis ... meh?
