@@ -104,6 +104,21 @@ themselves:
 
 **intermediate not marked as CA**
 
+I'm not sure how likely this is to happen in practice, but it happened to me while
+creating this project. The x509 spec states that only a CA certificate can sign other
+certificates. `openssl` lets you sign certificates with non-CA certificates, leading
+to issues such as the following:
+
+    # verify intermediate cert not marked as a CA cert
+    openssl verify -CAfile certs/uozusign_root.crt certs/uozusign_intermediate.notca.crt
+
+    > OK  # what???
+
+    # verify server cert signed by the non-CA intermediate
+    openssl verify -CAfile certs/uozusign_root.crt -untrusted certs/uozusign_intermediate.notca.crt certs/uozu.server.localhost.notca.crt
+
+    > error 24 at 1 depth lookup: invalid CA certificate  # OK, this is what we expected
+
 # Client certs
 
 ## Scenarios
