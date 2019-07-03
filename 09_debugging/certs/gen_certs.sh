@@ -45,6 +45,10 @@ openssl req -nodes -newkey rsa:2048 \
 openssl x509 -req -days 365 -in uozu.server.localhost.csr -CA uozusign_intermediate.crt \
     -CAkey uozusign_intermediate.key -CAcreateserial -out uozu.server.localhost.crt
 
+# sign server certificate with the invalid non-CA intermediate CA:
+openssl x509 -req -days 365 -in uozu.server.localhost.csr -CA uozusign_intermediate.notca.crt \
+    -CAkey uozusign_intermediate.key -CAcreateserial -out uozu.server.localhost.notca.crt
+
 # sign server certificate (with uozu.server.com CN) with the intermediate CA:
 openssl x509 -req -days 365 -in uozu.server.com.csr -CA uozusign_intermediate.crt \
     -CAkey uozusign_intermediate.key -CAcreateserial -out uozu.server.com.crt
