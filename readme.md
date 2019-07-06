@@ -30,8 +30,6 @@ what's happening.
 
 # todo
 
-- debugging
-- encrypted private key
 - fix todos in cert_questions.md
 - write an openssl command cheat sheet
 - tldr version of all this for ppl like me

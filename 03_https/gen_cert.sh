@@ -15,3 +15,6 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 # subj:   set certificate subject fields
 # keyout: path the write private key
 # out:    path to write certificate
+
+# encrypt the private key
+openssl rsa -aes256 -passout pass:1234 -in private_key.key -out private_key_encrypted.key
