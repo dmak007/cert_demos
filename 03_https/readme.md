@@ -1,8 +1,30 @@
+# HTTPs, with a self-signed certificate
+
 Using a self-signed certificate, we can serve content over https.
 
-Run `run_servers.sh`, and browse to https://localhost. You should
-see a security warning in your browser. This is because the browser
-doesn't trust the self-signed certificate used by this server.
+Our setup:
+
+![setup](./https.png)
+
+Run the following commands:
+
+    run_servers.sh
+
+    curl https://localhost
+
+    > curl: (60) SSL certificate problem: self signed certificate
+
+`curl` doesn't trust the self-signed certificate used by the server.
+We'll talk about trust in the next demo. For now, we can ignore certificate
+problems:
+
+    curl -k https://localhost
+
+    # <Server response (HTML)>
+
+You can also browse to https://localhost. You should see a security warning
+in your browser. This is because the browser doesn't trust the self-signed
+certificate used by the server.
 
 The certificate is in `certificate.crt`. This was created using the
 script `gen_cert.sh`.
