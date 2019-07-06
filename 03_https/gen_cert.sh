@@ -3,7 +3,7 @@
 # Generate a certificate and private key
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-            -subj "/C=AU/CN=my_common_name/emailAddress=me@me.com" \
+            -subj "/C=AU/CN=localhost/emailAddress=me@me.com" \
             -keyout private_key.key -out certificate.crt
 
 # req:    certificate request and certificate generating utility

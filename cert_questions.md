@@ -37,9 +37,15 @@ See https://github.com/uozuAho/cert_demos/tree/master/07_mutual_auth
     - The server must find a trusted CA in the client cert chain (or trust the client cert directly)
     - This happens in the TLS handshake
 - Which certificates need to be on the server (i.e. the client/intermediate/root) in order to authenticate?
-    - Enough that the client cerificate chain can be traced back to a trusted CA
-    - Alternatively, the client certificate can be trusted directly (todo: confirm with nginx)
-    - The server may be able to retrieve CA certs that it doesn't already have (todo: confirm)
+    - In short, enough that cerificatescan be traced back to a trusted CAs
+    - The server should send its server certificate and chain of all intermediate CAs
+        - ie. The server should be loaded with the server certificate and private key,
+          and all intermediate CA certificates
+    - For client authentication, the server should be loaded with trusted CA certificates that
+      client certificates can be signed by.
+    - Depending on the tools used, intermediate certificates can be retrieved from URLs
+      given in server certificates, negating the need to send intermediates. If unsure, it's
+      best to send all intermediates.
 - Is this answer different depending on whether there is a certificate chain?
     - No
 - How to identify whether a certificate is a client or server certificate?
@@ -64,7 +70,7 @@ See https://github.com/uozuAho/cert_demos/tree/master/07_mutual_auth
     - Yes, it matters, eg.
         - Putting a cert in Windows' 'Trusted Root Certification Authorities' will mean Windows
           will trust any cert signed by this cert. Putting the same cert in 'Personal' doesn't have
-          the same effect (todo: confirm)
+          the same effect. Not sure what the personal store is for ... client certs?
     - Yes, depends on implementation, OS etc.
         - eg clients/servers on linux seem to trust anything in `/etc/ssl/cert.pem` on `/etc/ssl/certs/*`
 
@@ -90,11 +96,10 @@ See https://github.com/uozuAho/cert_demos/tree/master/08_file_types
 See https://github.com/uozuAho/cert_demos/tree/master/09_debugging
 
 - If your cert config is incorrect, how do you debug it?
-    - `openssl verify` is a handy tool, if you've got all your certificate files on hand
-    - `openssl s_client` can give useful information about the SSL/TLS handshake
-    - It really depends on what software you're using. It's complicated by the fact
-      that some servers/libraries can automatically retrieve/build certificate chains (todo: confirm)
-
-## todo
-
-- fix todos in above text
+    - Use a variety of tools. Each one has its quirks, so it's best to get a number of opinions!
+    - Try
+        - `openssl verify`
+        - `openssl s_client` can give useful information about the SSL/TLS handshake
+        - `curl`
+        - Web browsers
+        - Logs from your web server
