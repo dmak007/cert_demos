@@ -31,3 +31,12 @@ docker run --name non_ca -p 84:443 -d \
     -v $PWD/certs/uozu.server.localhost.notca.chain.crt:/etc/ssl/certs/uozu.server.localhost.notca.chain.crt \
     -v $PWD/certs/uozu.server.localhost.key:/etc/ssl/certs/uozu.server.localhost.key \
     nginx
+
+# mutual auth
+docker run --name mutual_auth -p 85:443 -d \
+    -v $PWD/../static:/usr/share/nginx/html \
+    -v $PWD/nginx_configs/mutual_auth.conf:/etc/nginx/conf.d/nginx_config.conf \
+    -v $PWD/certs/uozu.server.localhost.chain.crt:/etc/ssl/certs/uozu.server.localhost.chain.crt \
+    -v $PWD/certs/uozu.server.localhost.key:/etc/ssl/certs/uozu.server.localhost.key \
+    -v $PWD/certs/uozusign_root.crt:/etc/ssl/certs/uozusign_root.crt \
+    nginx

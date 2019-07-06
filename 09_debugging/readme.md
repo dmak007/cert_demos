@@ -132,11 +132,30 @@ to issues such as the following:
 
 # Client certs
 
-## Scenarios
+**client doesn't send chain**
 
-- client sends wrong cert
-- client not send chain
+    echo "Q" | openssl s_client -CAfile certs/uozusign_root.crt localhost:85
 
+    > OK   # hmmm.... really?
 
-# todo
-- iis ... meh?
+    curl https://localhost:85 --cacert certs/uozusign_root.crt
+
+    > No required SSL certificate was sent   # ah OK, send a client cert:
+    
+    curl https://localhost:85 --cacert certs/uozusign_root.crt --cert certs/uozu.client.crt --key certs/uozu.client.key
+
+    > 400 Bad Request
+    > The SSL certificate error
+
+    # Well that doesn't tell us much. Check the nginx logs:
+
+    docker exec mutual_auth cat /tmp/nginx.log
+
+    > client SSL certificate verify error: (21:unable to verify the first certificate)
+
+    # Looks like a chain error. We're only sending a client certificate, without a chain to the root CA.
+    # Let's send the chain instead:
+
+    curl https://localhost:85 --cacert certs/uozusign_root.crt --cert certs/uozu.client.chain.crt --key certs/uozu.client.key
+
+    # Success!!
