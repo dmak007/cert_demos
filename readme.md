@@ -30,7 +30,6 @@ what's happening.
 
 # todo
 
-- write an openssl command cheat sheet
 - tldr version of all this for ppl like me
 - proof-read all docs, test all scripts, rename stuff if needed (eg. 'certificate.crt')
 - add pictures
