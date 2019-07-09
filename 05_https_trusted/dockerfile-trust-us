@@ -8,5 +8,5 @@ RUN rm /etc/ssl/cert.pem
 RUN rm /etc/ssl/certs/*
 
 # trust our self-signed cert
-COPY certificate.crt /usr/local/share/ca-certificates/certificate.crt
+COPY server.crt /usr/local/share/ca-certificates/server.crt
 RUN update-ca-certificates

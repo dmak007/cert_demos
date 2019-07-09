@@ -11,30 +11,28 @@ into the system's trusted CA store.
 
 ## Setup
 
-Before we trust our certificate, let's create an isolated environment on which
-we can build. Our environment will contain
+Our setup will have a http server, a client that trusts no certificates, and
+another client that trusts the server certificate.
 
-- nginx server listening on 443 with our self-signed certificate
-- A client docker image containing curl, openssl and no trusted certiciates.
-  This client will be used to communicate with the server.
+![setup](./setup.png)
 
 `run_server.sh` fires up our trusty server, using the certificate generated
 by `gen_cert.sh`. It also creates a network called `05_net` over which we
 can use to communicate with the server from other containers.
 
-Once the server is running, run
-`docker build -f dockerfile-no-trust -t uozuaho/sslcurl_no_trust .` to build the
-client docker image.
+Run `build.sh` to build our client docker images.
 
-**todo** this next part is overly complicated, it'd be nice to find an
-easier way to communicate between containers.
+## Send requests from the clients
 
-Now run `docker network inspect 05_net`. You should see a container in the
-network. Copy its IPv4Address. Now run
-`docker run -it --network 05_net uozuaho/sslcurl_no_trust curl <container IP>`
+Now run `docker network inspect 05_net | grep IPv4Address`. Copy the value of
+the IPv4Address, minus the bitmask, and use it in place of [ip address] in the
+following commands:
+
+    docker run -it --network 05_net uozuaho/sslcurl_no_trust curl [ip address]
 
 You should see the welcome page from the nginx server. Now run
-`docker run -it --network 05_net uozuaho/sslcurl_no_trust curl https://<container IP>`
+
+    docker run -it --network 05_net uozuaho/sslcurl_no_trust curl https:/[ip address]
 
 You should see an error about certificate locations. This is because the
 uozuaho/sslcurl_no_trust docker image doesn't come with any trusted ssl certificates.
