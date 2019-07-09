@@ -6,9 +6,13 @@ When running nginx with a self-signed cert, browsers show a security warning.
 Something to the effect of 'certificate issuer is not trusted'.
 
 This is because we issued our own certificate (created and signed by us),
-and the browser doesn't trust us.
+and the browser doesn't trust us. Machines / docker images etc. usually come
+with a set of trusted certificates, and more can be installed:
 
-It turns out that no-one trusts us. Assuming you're running the server from
+![trusted_certs](./machine_with_trusted_certs.png)
+
+It turns out that no-one trusts us, because our certificate hasn't been
+installed (or 'trusted'). Assuming you're running the server from
 03_https, run
 
 `curl https://localhost -o /dev/null`
@@ -33,40 +37,41 @@ for testing.
 
 Now run
 
-`curl https://en.wikipedia.org/wiki/Main_Page -o /dev/null`
+    curl https://en.wikipedia.org/wiki/Main_Page -o /dev/null
+
+    > OK
 
 This works fine - no SSL problem. Why does curl trust wikipedia's
 certificate and not our self-signed one? Run
 
-`echo "Q" | openssl s_client -connect en.wikipedia.org:443`
+    echo "Q" | openssl s_client -connect en.wikipedia.org:443
 
-At the top of the output, you'll see a longer version of:
+    # simplified output
+    > CN = GlobalSign, verify return:1
+    > CN = GlobalSign Organization Validation CA - SHA256 - G2, verify return:1
+    > CN = *.wikipedia.org, verify return:1
 
-- CN = GlobalSign, verify return:1
-- CN = GlobalSign Organization Validation CA - SHA256 - G2, verify return:1
-- CN = *.wikipedia.org, verify return:1
-
-I think this is openssl verifying each certificate in the "chain" of 
+This is openssl verifying each certificate in the "chain" of 
 certificates presented by wikipedia. A bit further down in the output,
 we see `Verification: OK`. This means openssl trusts this connection.
-Why?
+This is because the GlobalSign certificate is trusted by the system.
 
-It turns out that openssl can be configured with pre-trusted certificates. Run
+To see all trusted certificates, run
 
-`openssl version -d`
+    openssl version -d
 
-You should see something like 
-
-`OPENSSLDIR: "/mingw64/ssl"`
+    # your dir may differ
+    > OPENSSLDIR: "/mingw64/ssl"
 
 This is where openssl's configuration is. If you have a look in
-/mingw/ssl/certs, you'll see ca-bundle.crt and ca-bundle.trust.crt. You
+/mingw/ssl/certs, you'll see `ca-bundle.crt` and `ca-bundle.trust.crt`. You
 can google the difference between these files, but essentially they're
 all the CAs openssl trusts.
 
 To print out all the certificate subjects in a bundle, run
 
-`awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /mingw64/ssl/certs/ca-bundle.crt`
+    awk -v cmd='openssl x509 -noout -subject' \
+    '/BEGIN/{close(cmd)};{print | cmd}' < /mingw64/ssl/certs/ca-bundle.crt
 
 In the output of the above, there is a subject
 
@@ -83,7 +88,9 @@ If this were not the case, we'd see the same SSL errors when
 connecting to wikipedia. We can do this with docker images that
 don't come with any trusted CAs:
 
-`docker run -it frapsoft/openssl s_client -connect en.wikipedia.org:443`
+    docker run -it frapsoft/openssl s_client -connect en.wikipedia.org:443
+    
+    > Verify return code: 20 (unable to get local issuer certificate)
 
 You can pass trusted CAs to openssl with the `CAfile` option. See
 `openssl_trust_wiki.sh` for how to pass the globalsign root certificate
