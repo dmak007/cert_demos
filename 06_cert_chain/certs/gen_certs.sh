@@ -23,7 +23,7 @@ openssl x509 -req -days 365 -in uozusign_intermediate.csr \
 
 # generate server certificate request
 openssl req -nodes -newkey rsa:2048 \
-    -subj "/C=AU/CN=uozuaho.com/emailAddress=me@me.com" \
+    -subj "/C=AU/CN=localhost/emailAddress=me@me.com" \
     -keyout uozuaho.com.key -out uozuaho.com.csr
 
 # sign server certificate with the intermediate CA:

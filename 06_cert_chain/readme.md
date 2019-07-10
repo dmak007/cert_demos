@@ -5,7 +5,7 @@ certificate chain is a sequence of certificates, with each certificate in
 in the sequence having been signed using the previous certificate's private
 key. Since the first certificate in the sequence has no previous certificate,
 it is signed using its own private key. There is no security benefit in this;
-the certificate format requires that a signature be present,
+the certificate format requires that a signature be present.
 
 ![chain](./chain.png)
 
@@ -31,22 +31,37 @@ Certificates setup:
 The server sends the server and intermediate certificate, and the client trusts
 the root certificate.
 
-Run `run_server.sh` to start our HTTPS server. Now run
-`echo "Q" | openssl s_client -CAfile certs/uozusign_root.crt localhost:443`.
-This should succeed. Note that trusting the intermediate or server certificate
-certificate will fail:
+Run `run_server.sh` to start our HTTPS server. Now connect with a couple of clients:
 
-`echo "Q" | openssl s_client -CAfile certs/uozusign_intermediate.crt localhost:443`
-`echo "Q" | openssl s_client -CAfile certs/uozuaho.com.crt localhost:443`
+    echo "Q" | openssl s_client -CAfile certs/uozusign_root.crt localhost:443
 
-This is because by default, openssl expects the last certificate in the chain
-to be a self-signed CA certificate in its trusted CA list. Thus, the server must
-send the certificate chain to _at least_ the penultimate intermediate CA. Excluding
-the root certificate from the chain is quite common, as it must be trusted a priori
-by the client.
+    > OK
+
+    curl https://localhost --cacert certs/uozusign_root.crt
+
+    > OK
+
+Trusting the intermediate or server certificate certificate will fail:
+
+    echo "Q" | openssl s_client -CAfile certs/uozusign_intermediate.crt localhost:443
+    echo "Q" | openssl s_client -CAfile certs/uozuaho.com.crt localhost:443
+    curl https://localhost --cacert certs/uozusign_intermediate.crt
+    curl https://localhost --cacert certs/uozuaho.com.crt
+
+    > all no good :(
+
+This is because these clients expect the last certificate in the chain to be a
+self-signed CA certificate in its trusted CA list. Thus, the server must send
+the certificate chain to _at least_ the penultimate intermediate CA*. Excluding
+the root certificate from the chain is quite common, as it must be already trusted
+by the client for verification to succeed.
+
+*Note: some clients are able to retrieve intermediate certificates if they are not
+included in the server certificate chain, provided the included certificates
+contain information on how to retrieve the intermediate certificates.
 
 It seems reasonable that clients should be able to be configured to trust an
-intermediate CA, however it seems that expecting the self-signed root CA is common
+intermediate CA, however it seems that expecting a self-signed root CA is common
 behaviour. See https://security.stackexchange.com/questions/17391/can-an-intermediate-ca-be-trusted-like-a-self-signed-root-ca
 
 
