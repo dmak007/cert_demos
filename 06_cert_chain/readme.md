@@ -1,25 +1,32 @@
 # Certificate chains, intermediate certificates
 
-The widely used X.509 certificate format defines 'certificate chains'.
-Read more at https://en.wikipedia.org/wiki/X.509. In short, rather than
-having to install thousands of trusted certificates, clients can trust
-a smaller number of 'Certificate Authorities (CA)', which can sign server
-certificates in a cryptographically secure way. This way, if a client receives
-a server certificate that was signed by a CA they trust, then they will also
-trust the server certificate.
+The widely used X.509 certificate specification defines 'certificate chains'. A
+certificate chain is a sequence of certificates, with each certificate in
+in the sequence having been signed using the previous certificate's private
+key. Since the first certificate in the sequence has no previous certificate,
+it is signed using its own private key. There is no security benefit in this;
+the certificate format requires that a signature be present,
 
-For extra flexibility, CAs can sign other CA certificates, leading to 'certificate
-chains', eg. CA 1 signs CA 2, CA 2 signs CA 3 etc. etc. CA N signs the server
+![chain](./chain.png)
+
+The reason for the concept of the chain, is that rather than having to install
+thousands of trusted certificates, clients can trust a smaller number of
+'Certificate Authorities (CA)', which can sign server certificates in a 
+cryptographically secure way. This way, if a client receives a server certificate
+that was signed by a CA they trust, then they will also trust the server
 certificate.
 
+Read more at https://en.wikipedia.org/wiki/X.509.
 
 # This demo
 
+![setup](./chain_demo_setup.png)
+
 Certificates setup:
 
-Root:           UozuSign root
-Intermediate:   UozuSign intermediate   (signed by root)
-Server:         uozuaho.com.crt         (signed by intermediate)
+- Root:           UozuSign root
+- Intermediate:   UozuSign intermediate   (signed by root)
+- Server:         uozuaho.com.crt         (signed by intermediate)
 
 The server sends the server and intermediate certificate, and the client trusts
 the root certificate.
